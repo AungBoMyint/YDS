@@ -42,9 +42,11 @@ class HomeController extends GetxController {
   var parentGuideLineID = "".obs;
   Rxn<Question> mainQuestion = Rxn<Question>();
   Rxn<SubQuestion> editSubQuestion = Rxn<SubQuestion>();
+  RxList<PurchaseModel> purchaseModelList = <PurchaseModel>[].obs;
   RxList<CourseForm> enrollList = <CourseForm>[].obs;
   RxList<DrivingLicenceForm> drivingLicenceFormList = <DrivingLicenceForm>[].obs;
   RxList<CarLicenceForm> carLicenceFormList = <CarLicenceForm>[].obs;
+  var alreadyWatchIfAdmin = false.obs;
 
   void setMainQuestion(Question id){
     mainQuestion.value = id;
@@ -92,6 +94,20 @@ class HomeController extends GetxController {
   bool isCanAdd(RewardProduct reward) {
     return currentUserPoint > (reward.requirePoint * 1);
   }
+  
+   var firstTimePressedCart = false.obs;
+  bool checkToAcceptOrder(){
+  if(myRewardCart.isEmpty){
+    Get.snackbar('Error', "Cart is empty");
+    return false;
+  }else if(townShipNameAndFee.isEmpty){
+    Get.snackbar('Error', "Need to choose a township");
+    firstTimePressedCart.value = true;
+    return false;
+  }else{
+    return true;
+  }
+ }
 
   void addToRewardCart(RewardProduct product, int index) {
     debugPrint("****RewardP : ${product.requirePoint}");
@@ -502,7 +518,7 @@ class HomeController extends GetxController {
       remainQuantity: model.remainQuantity,
     );
   }
-
+ 
   //Get ItemModel
   ItemModel changeItemModel(HiveItem model) {
     return ItemModel(
@@ -535,14 +551,13 @@ class HomeController extends GetxController {
   } //////////////////
 
   final RxBool isLoading = false.obs;
-
   Future<void> proceedToPay() async {
     showLoading();
     try {
       final total = subTotal + townShipNameAndFee["fee"] as int;
-      final list = getUserOrderData();
       final _purchase = PurchaseModel(
         id: Uuid().v1(),
+        userId: currentUser.value!.id,
         dateTime: DateTime.now().toString(),
         items: myCart.isNotEmpty
             ? myCart.map((element) => element).toList()
@@ -550,11 +565,11 @@ class HomeController extends GetxController {
         rewardProductList: myRewardCart.isNotEmpty
             ? myRewardCart.values.map((e) => e).toList()
             : null,
-        name: list[0],
-        email: list[1],
-        phone: list[2],
-        address: list[3],
-        bankSlipImage: bankSlipImage.value.isEmpty ? null : bankSlipImage.value,
+        name: currentUser.value?.userName ?? "",
+        email: currentUser.value?.emailAddress ?? "",
+        phone: "",
+        address: "",
+        bankSlipImage: null,
         deliveryTownshipInfo: [
           townShipNameAndFee["townName"],
           townShipNameAndFee["fee"]
@@ -671,6 +686,7 @@ class HomeController extends GetxController {
   }
 
   Future<void> logout() async {
+    Get.offAllNamed(introScreen);
     try {
       await _auth.logout();
     } catch (e) {
@@ -716,7 +732,8 @@ class HomeController extends GetxController {
     }
     Future<void> saveTokenToDatabase(String token) async {
  
-  String userId = FirebaseAuth.instance.currentUser!.uid;
+  if(currentUser.value!.status! >= 0){
+    String userId = FirebaseAuth.instance.currentUser!.uid;
 
   FirebaseFirestore.instance.runTransaction((transaction) async{
     final secureSnapshot = await FirebaseFirestore.instance
@@ -726,7 +743,47 @@ class HomeController extends GetxController {
         "token": currentUserDeviceToken.value,
         });
   });
+  }
 }
+
+ void watchOnlyIfAdmin(){
+  alreadyWatchIfAdmin.value = true;
+  _database.watchWithDateTime(courseFormCollection).listen((event) {//CourseForm
+      enrollList.value = event.docs.map((e) => CourseForm.fromJson(e.data())).toList();
+    });
+    _database.watchWithDateTime(drivingLicenceCollection).listen((event) {//DrivingLicenceForm
+      drivingLicenceFormList.value = event.docs.map((e) => DrivingLicenceForm.fromJson(e.data())).toList();
+    });
+    _database.watchWithDateTime(carLicenceCollection).listen((event) {//CarLicenceForm
+      carLicenceFormList.value = event.docs.map((e) => CarLicenceForm.fromJson(e.data())).toList();
+    });
+    _database.watchWithDateTime(purchaseCollection).listen((event) {//PurchaseModelForm
+      if(event.docs.isNotEmpty){
+        purchaseModelList.clear();
+        var memicList =  event.docs.map((e) =>PurchaseModel.fromJson(e.data())
+      ).toList();
+      memicList.forEach((element) {
+        final matchEnrollList = enrollList.where((p0) => p0.userID == element.userId);
+        final matchCarList = carLicenceFormList.where((p0) => p0.userId == element.userId);
+        final matchDrivingList = drivingLicenceFormList.where((p0) => p0.userId == element.userId);
+        if(matchEnrollList.isNotEmpty){
+          purchaseModelList.add(element.copyWith(
+            address: matchEnrollList.first.address,
+          ));
+        }else if(matchCarList.isNotEmpty){
+          purchaseModelList.add(element.copyWith(
+            address: matchEnrollList.first.address,
+          ));
+        }else{
+          purchaseModelList.add(element.copyWith(
+            address: matchEnrollList.first.address,
+          ));
+        }
+        
+      });
+      }
+    });
+ }
 
   @override
   void onInit() async {
@@ -739,15 +796,7 @@ class HomeController extends GetxController {
     if (getUserOrderData().isNotEmpty) {
       checkOutStep.value = 1;
     } // SharedPreference to Stroe
-    _database.watchWithDateTime(courseFormCollection).listen((event) {//CourseForm
-      enrollList.value = event.docs.map((e) => CourseForm.fromJson(e.data())).toList();
-    });
-    _database.watchWithDateTime(drivingLicenceCollection).listen((event) {//DrivingLicenceForm
-      drivingLicenceFormList.value = event.docs.map((e) => DrivingLicenceForm.fromJson(e.data())).toList();
-    });
-    _database.watchWithDateTime(carLicenceCollection).listen((event) {//CarLicenceForm
-      carLicenceFormList.value = event.docs.map((e) => CarLicenceForm.fromJson(e.data())).toList();
-    });
+    
     _database.watch(rewardProductCollection).listen((event) {
       rewardProductList.value =
           event.docs.map((e) => RewardProduct.fromJson(e.data())).toList();
@@ -783,7 +832,15 @@ class HomeController extends GetxController {
 
     _auth.onAuthChange().listen((user) async {
       if (user == null) {
-        currentUser.value = null;
+        currentUser.value = AuthUser(
+          id: "gustID", 
+          emailAddress: "gust@gmail.com", 
+          userName: "Gust", 
+          image: userImage, 
+          points: 0, 
+          token: "gustToken",
+          status: -1,
+          );
       } else {
         currentUser.value = AuthUser(
           id: "testID", 
@@ -792,6 +849,7 @@ class HomeController extends GetxController {
           image: userImage, 
           points: 0, 
           token: "testToken",
+          status: 0,
           );
         if (!(user == null)) {
           debugPrint("*******user is not null****");
@@ -811,6 +869,7 @@ class HomeController extends GetxController {
               image: user.photoURL!,
               points: 0,
               token: currentUserDeviceToken.value,
+              status: 0,
             );
             await _database.write(
               normalUserCollection,
@@ -831,6 +890,9 @@ class HomeController extends GetxController {
               debugPrint("****UserEvent: ${event.data()}");
               currentUser.value = AuthUser.fromJson(event.data()!);
               currentUserPoint = currentUser.value!.points;
+              if(currentUser.value!.status! > 0 && !alreadyWatchIfAdmin.value){
+                watchOnlyIfAdmin();
+              }
             }
           });
         }
@@ -952,7 +1014,8 @@ class HomeController extends GetxController {
       // Once signed in, return the UserCredential
       await FirebaseAuth.instance.signInWithCredential(credential);
       hideLoading();
-      Get.offNamed(redirectRouteUrl);
+      Get.back();
+      //Get.offNamed(redirectRouteUrl);
     } catch (e) {
       debugPrint("*******$e");
       hideLoading();
@@ -961,7 +1024,12 @@ class HomeController extends GetxController {
 
   Future<void> logOut() async {
     showLoading();
-    await FirebaseAuth.instance.signOut();
+    Get.offAllNamed(introScreen);
+    try{
+      await FirebaseAuth.instance.signOut();
+    }catch(e){
+      debugPrint("*******LOGOUT Exception: $e");
+    }
     hideLoading();
     currentUser.value = null;
     Get.offNamed(introScreen);

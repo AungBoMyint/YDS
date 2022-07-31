@@ -3,7 +3,9 @@ import 'package:get/get.dart';
 import 'package:hammies_user/utils/widget/widget.dart';
 import 'package:hammies_user/widgets/radio/radio_type.dart';
 
+import '../../../controller/home_controller.dart';
 import '../../../model/radio/radio_model.dart';
+import '../../../routes/routes.dart';
 import '../../view/cart.dart';
 import '../controller/service_form_controller.dart';
 
@@ -22,6 +24,7 @@ class _ServiceFormState extends State<ServiceForm> {
   @override
   Widget build(BuildContext context) {
     final ServiceFormController _controller = Get.find();
+    final HomeController _homeController = Get.find();
     return Scaffold(
       appBar: appBar(title: "သင်တန်းအပ်ရန်",
       ),
@@ -107,6 +110,10 @@ class _ServiceFormState extends State<ServiceForm> {
               _controller.pressedFirstTime();
               setState(() {
               });
+              if(_homeController.currentUser.value!.status! < 0){
+                Get.toNamed(loginScreen);
+                return;
+              }
               if(_controller.isValidate()){
                 Get.bottomSheet(
                   PaymentOptionContent(

@@ -7,7 +7,9 @@ import 'package:hammies_user/widgets/radio/radio_type.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
 
+import '../../../controller/home_controller.dart';
 import '../../../model/radio/radio_model.dart';
+import '../../../routes/routes.dart';
 import '../../../widgets/radio/car_type.dart';
 import '../../../widgets/radio/class_type.dart';
 import '../../../widgets/radio/days_type.dart';
@@ -30,7 +32,7 @@ class _CourseFormState extends State<CourseForm> {
 
   @override
   Widget build(BuildContext context) {
-    
+    final HomeController _homeController = Get.find();
     return Scaffold(
       appBar: appBar(title: "သင်တန်းအပ်ရန်",
       ),
@@ -157,6 +159,10 @@ class _CourseFormState extends State<CourseForm> {
               _controller.pressedFirstTime();
               setState(() {
               });
+              if(_homeController.currentUser.value!.status! < 0){
+                Get.toNamed(loginScreen);
+                return;
+              }
               if(_controller.isValidate()){
                 Get.bottomSheet(
                   PaymentOptionContent(

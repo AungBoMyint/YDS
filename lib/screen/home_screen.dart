@@ -72,7 +72,19 @@ class _HomeScreenState extends State<HomeScreen> {
 
     fltNotification = FlutterLocalNotificationsPlugin();
 
-    fltNotification!.initialize(initSetting);
+    selectNotification(String? payload) async {
+    if (payload != null) {
+      debugPrint('notification payload: $payload');
+    }
+    if(payload == homeScreen){
+      await Get.toNamed(homeScreen);
+    }
+    else{
+      await Get.toNamed(enrollmentScreen);
+    }
+    }
+
+    fltNotification!.initialize(initSetting,onSelectNotification: selectNotification);
 
     if (messaging != null) {
       print('vvvvvvv');
@@ -114,7 +126,7 @@ class _HomeScreenState extends State<HomeScreen> {
         NotificationDetails(android: androidDetails, iOS: iosDetails);
     await fltNotification!.show(0, message.notification!.title ?? '',
         message.notification!.body ?? '', generalNotificationDetails,
-        payload: 'Notification');
+        payload:  message.data["route"]);
   }
 
   @override

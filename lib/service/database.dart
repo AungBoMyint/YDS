@@ -97,25 +97,7 @@ class Database {
                 .doc()
                 .set(purchaseModel)
                 .then((value) async {
-              //We send push after order is uploaded
-              if (!(model.items == null)) {
-                int totalPay = 0;
-                for (var item in model.items!) {
-                  totalPay += item.count * item.price;
-                }
-                try {
-                  for (PurchaseItem item in model.items!) {
-                    debugPrint("****Transaction Loop****");
-                    await updateRemainQuantity(item);
-                    await updateTotalForDaily(item);
-                    await updateTotalForMonthly(item);
-                  }
-                  await increaseCurrentUserPoint(
-                      int.parse("${totalPay / 100}".split('.').first));
-                } catch (e) {
-                  debugPrint("********SalesUpdateFailed: $e**");
-                }
-              }
+              
               if (!(model.rewardProductList == null)) {
                 int totalPoints = 0;
                 for (var item in model.rewardProductList!) {
@@ -127,12 +109,13 @@ class Database {
                   debugPrint("*****ReduceFailed: $e");
                 }
               }
-            }); /* /* Api.sendPush(
+              Api.sendPushToAdmin(
                     "အော်ဒါတင်ခြင်း",
                     "🧑အမည်:${model.name}\n"
                         "🏠လိပ်စာ: ${model.address}\n"
-                        "✍အီးမေးလ်: ${model.email}") */); */
-          });
+                        "✍အီးမေးလ်: ${model.email}");
+                 });
+            }); 
         });
       } on FirebaseException catch (e) {
         debugPrint("*******Image Upload Error $e******");
@@ -144,25 +127,7 @@ class Database {
             .doc()
             .set(model.toJson())
             .then((value) async {
-          //We send push after order is uploaded
-          if (!(model.items == null)) {
-            int totalPay = 0;
-            for (var item in model.items!) {
-              totalPay += item.count * item.price;
-            }
-            try {
-              for (PurchaseItem item in model.items!) {
-                debugPrint("****Transaction Loop****");
-                await updateRemainQuantity(item);
-                await updateTotalForDaily(item);
-                await updateTotalForMonthly(item);
-              }
-              await increaseCurrentUserPoint(
-                  int.parse("${totalPay / 100}".split('.').first));
-            } catch (e) {
-              debugPrint("********SalesUpdateFailed: $e**");
-            }
-          }
+          
           if (!(model.rewardProductList == null)) {
             int totalPoints = 0;
             for (var item in model.rewardProductList!) {
@@ -173,12 +138,13 @@ class Database {
             } catch (e) {
               debugPrint("*****ReduceFailed: $e");
             }
+            Api.sendPushToAdmin(
+                    "အော်ဒါတင်ခြင်း",
+                    "🧑အမည်:${model.name}\n"
+                        "🏠လိပ်စာ: ${model.address}\n"
+                        "✍အီးမေးလ်: ${model.email}");
           }
-        });/* then((value) => Api.sendPush(
-                "အော်ဒါတင်ခြင်း",
-                "🧑အမည်:${model.name}\n"
-                    "🏠လိပ်စာ: ${model.address}\n"
-                    "✍အီးမေးလ်: ${model.email}")); */
+        });
       } catch (e) {
         debugPrint("****************PurchseSubmitError $e*************");
       }

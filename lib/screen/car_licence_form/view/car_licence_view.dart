@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hammies_user/routes/routes.dart';
 import 'package:hammies_user/screen/car_licence_form/controller/car_license_controller.dart';
 import 'package:hammies_user/screen/course_form/controller/course_form_controller.dart';
 import 'package:hammies_user/utils/widget/widget.dart';
@@ -7,11 +8,8 @@ import 'package:hammies_user/widgets/radio/radio_type.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
 
+import '../../../controller/home_controller.dart';
 import '../../../model/radio/radio_model.dart';
-import '../../../widgets/radio/car_type.dart';
-import '../../../widgets/radio/class_type.dart';
-import '../../../widgets/radio/days_type.dart';
-import '../../../widgets/radio/time_type.dart';
 import '../../view/cart.dart';
 
 class CarLicenceForm extends StatefulWidget {
@@ -28,6 +26,7 @@ class _CarLicenceFormState extends State<CarLicenceForm> {
   @override
   Widget build(BuildContext context) {
     final CarLicenseController _controller = Get.find();
+    final HomeController _homeController = Get.find();
     return Scaffold(
       appBar: appBar(title: "သင်တန်းအပ်ရန်",
       ),
@@ -61,7 +60,7 @@ class _CarLicenceFormState extends State<CarLicenceForm> {
                   fieldName: "ကားလိုင်စင်ကုန်ဆုံးရက်",
                 ),
                 RadioTypeWidget<String>(
-                  title: "သင်တန်းအမျိုးအစား",
+                  title: "ကား engin အမျိုးအစား",
                   onChanged: (result) {
                     setState(() {
                       enginGroupValue = result;
@@ -76,7 +75,10 @@ class _CarLicenceFormState extends State<CarLicenceForm> {
                       );
                   }).toList(),
                   ),  
-                    
+                ChildTextFieldWidget(
+                  fieldKey: "toDoFromOffice",
+                  fieldName: "လုပ်ငန်းဆောင်ရွက်ရန်ရုံး",
+                ),    
               ],
               
           ),
@@ -95,6 +97,10 @@ class _CarLicenceFormState extends State<CarLicenceForm> {
               _controller.pressedFirstTime();
               setState(() {
               });
+              if(_homeController.currentUser.value!.status! < 0){
+                Get.toNamed(loginScreen);
+                return;
+              }
               if(_controller.isValidate()){
                 Get.bottomSheet(
                   PaymentOptionContent(

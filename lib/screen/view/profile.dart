@@ -381,7 +381,8 @@ class _AdminPanel extends StatelessWidget {
                         minRadius: 20,
                         maxRadius: 20,
                         child: Text(
-                          "${controller.enrollList.length + controller.carLicenceFormList.length + controller.drivingLicenceFormList.length}",
+                          "${controller.enrollList.length + controller.carLicenceFormList.length + controller.drivingLicenceFormList.length
+                          + controller.purchaseModelList.length}",
                           style: TextStyle(color: Colors.black, fontSize: 14),
                         )),
                   ],

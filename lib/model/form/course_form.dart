@@ -6,6 +6,7 @@ part 'course_form.g.dart';
 
 @freezed
 class CourseForm with _$CourseForm{
+  @JsonSerializable(explicitToJson: true)
   factory CourseForm({
     required String id,
   required String name,

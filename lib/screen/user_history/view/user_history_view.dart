@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:get/get.dart';
 import 'package:hammies_user/screen/user_history/controller/user_history_controller.dart';
 import 'package:hammies_user/screen/user_history/detail/cfh_detail.dart';
 import 'package:hammies_user/screen/user_history/detail/clh_detail.dart';
 import 'package:hammies_user/screen/user_history/detail/dlh_detail.dart';
-import 'package:intl/intl.dart';
+import 'package:hammies_user/screen/user_history/detail/pm_detail.dart';
 
 import '../../../data/constant.dart';
 import '../../../utils/utils.dart';
@@ -18,7 +16,7 @@ class UserHistoryView extends StatelessWidget {
   Widget build(BuildContext context) {
     final UserHistoryController _controller = Get.find();
     return DefaultTabController(
-      length: 3,
+      length: 4,
       child: Scaffold(
         appBar:AppBar(
               automaticallyImplyLeading: true,
@@ -46,6 +44,9 @@ class UserHistoryView extends StatelessWidget {
                           Tab(
                             text: "Driving Licence",
                           ),
+                          Tab(
+                            text: "Reward Orders",
+                          ),
                         ],
                         ),
         ),
@@ -57,6 +58,8 @@ class UserHistoryView extends StatelessWidget {
             CarLicenceFormList(),
             //DrivingLicence
             DrivingLicenceFormList(),
+            //Reward Product Orders
+            RewardProductOrders(),
           ],
         ),
       ),
@@ -183,6 +186,51 @@ class DrivingLicenceFormList extends StatelessWidget {
                   ),
                   trailing: Text(
                     "${getDate(course.dateTime)}"
+                  ),
+                ),
+              );
+            },
+          );
+        }
+      );
+    });
+  }
+}
+
+class RewardProductOrders extends StatelessWidget {
+  const RewardProductOrders({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final UserHistoryController _controller = Get.find();
+    return Obx((){
+      if(_controller.isPurchaseLoading.value){
+        return Center(
+          child: SizedBox(
+            height: 50,
+            width: 50,
+            child: CircularProgressIndicator(),
+          ),
+        );
+      }
+      if(_controller.purchaseModelList.isEmpty){
+        return const Center(child: Text("No order yet!."),);
+      }
+      return Obx(
+         () {
+          return ListView.builder(
+            itemCount: _controller.purchaseModelList.length,
+            itemBuilder: (context,index){
+              final course = _controller.purchaseModelList[index];
+              return Card(
+                child: ListTile(
+                  onTap: () => Get.to(() => PurchaseModelDetail(purchaseModel: course)),
+                  title: Text(
+                    "Delivery Fees => ${course.deliveryTownshipInfo[0]}",
+                  ),
+                 
+                  trailing: Text(
+                    "${getDate(DateTime.parse(course.dateTime))}"
                   ),
                 ),
               );

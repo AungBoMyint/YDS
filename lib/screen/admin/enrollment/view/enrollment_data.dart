@@ -6,6 +6,8 @@ import 'package:hammies_user/data/enum.dart';
 import 'package:hammies_user/screen/admin/form_detail/car_form_detail.dart';
 import 'package:hammies_user/screen/admin/form_detail/course_form_detail.dart';
 import 'package:hammies_user/screen/admin/form_detail/driving_licence_form_detail.dart';
+import 'package:hammies_user/screen/admin/form_detail/purchase_detail.dart';
+import 'package:hammies_user/screen/user_history/detail/pm_detail.dart';
 import 'package:photo_view/photo_view.dart';
 
 import '../../../../controller/home_controller.dart';
@@ -26,7 +28,7 @@ class _EnrollmentDataViewState extends State<EnrollmentDataView> {
     final HomeController _controller = Get.find();
     final EnrollmentController _enController = Get.find();
     return DefaultTabController(
-      length: 3,
+      length: 4,
       child: Scaffold(
         key: _scaffold,
               appBar:  AppBar(
@@ -55,6 +57,9 @@ class _EnrollmentDataViewState extends State<EnrollmentDataView> {
                           Tab(
                             text: "Car Licence",
                           ),
+                          Tab(
+                            text: "Purchase",
+                          ),
                         ],
                         ),
         ),
@@ -64,6 +69,7 @@ class _EnrollmentDataViewState extends State<EnrollmentDataView> {
             EnrollmentListView(controller: _controller, enController: _enController),
             DrivingLicenceListView(controller: _controller, enController: _enController),
             CarLicenceFormListView(controller: _controller, enController: _enController),
+            PurchaseModelList(),
           ],
           ),
           
@@ -463,3 +469,32 @@ class CustomPhotoViewer extends StatelessWidget {
                         ),
                     );
   }
+  
+  class PurchaseModelList extends StatelessWidget {
+  const PurchaseModelList({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final HomeController _homeController = Get.find();
+    return  ListView.builder(
+                    itemCount: _homeController.purchaseModelList.length,
+                    itemBuilder: (context,index){
+                      final purchase = _homeController.purchaseModelList[index];
+                       
+                      return SizedBox(
+                        height: 85,
+                        child: Card(
+                          child: Center(
+                            child: ListTile(
+                              onTap: () => Get.to(() => PurchaseModelDetail(purchaseModel: purchase)),
+                              title: Text(purchase.name),
+                              subtitle: Text(purchase.address),
+                             ),
+                            ),
+                          ),
+                    
+                      );
+                    },
+                    );
+  }
+}

@@ -84,7 +84,7 @@ class OnBoardingPage extends StatelessWidget {
         animationDuration: 100,
       );
 
-  void goToHome(context) => Get.offNamed(redirectRoute());
+  void goToHome(context) => Get.offNamed(homeScreen);//Get.offNamed(redirectRoute());
 
   Widget buildImage(String path) =>
       Center(child: Image.asset(path, width: 400));

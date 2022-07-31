@@ -202,12 +202,10 @@ class _HomeRewardState extends State<HomeReward> {
                                                         : homeIndicatorColor,
                                                   ))),
                                           onPressed: () {
-                                            if (_homeController
-                                                    .currentUser.value ==
-                                                null) {
-                                              _homeController
-                                                  .signInWithGoogle(homeScreen);
-                                            } else {
+                                            if(_homeController.currentUser.value!.status! < 0){
+                                                Get.toNamed(loginScreen);
+                                                return;
+                                              } else {
                                               debugPrint(
                                                   "*****Add to cart reward product**");
 

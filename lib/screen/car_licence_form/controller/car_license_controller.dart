@@ -83,7 +83,7 @@ class CarLicenseController extends GetxController {
         phoneNumber: inputMap["phNo"]?.text ?? "", 
         isConfirmed: false,
         dateTime: DateTime.now(), 
-        toDoFromOffice: '',
+        toDoFromOffice: inputMap["toDoFromOffice"]?.text ?? "",
         );
       showLoading();
        if (_homeController.bankSlipImage.isNotEmpty) {
