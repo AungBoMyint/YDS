@@ -12,7 +12,6 @@ import 'package:uuid/uuid.dart';
 import '../../../controller/home_controller.dart';
 import '../../../data/constant.dart';
 import '../../../model/price/cost.dart';
-import '../../../model/radio/radio_model.dart';
 import '../../../service/api.dart';
 
 class ServiceFormController extends GetxController {
@@ -22,6 +21,8 @@ class ServiceFormController extends GetxController {
 
   final HomeController _homeController = Get.find();
   var isFirstTimePress = false.obs;
+  RxList<Cost> costList = <Cost>[].obs;
+  var costID = "".obs;
   Cost? cost;
  
   Rxn<DateTime?> selectedDateTime = Rxn<DateTime?>();
@@ -30,9 +31,14 @@ class ServiceFormController extends GetxController {
   void onInit() async{
     super.onInit();
     final result = await _database.readCollection(drivingLicenceCostCollection);
-    cost = Cost.fromJson(result.docs.first.data());
+    if(result.docs.isNotEmpty){
+      costList.value = result.docs.map((e) => Cost.fromJson(e.data())).toList();
+    costID.value = costList.first.id;
+    }
+    
   }
-
+  
+  void setCostId(String id) => costID.value = id;
   void setSelectedDateTime(DateTime dateTime) => selectedDateTime.value = dateTime;
   
  
@@ -77,7 +83,7 @@ class ServiceFormController extends GetxController {
       final uuID = Uuid().v1();
       final drivingModel = DrivingLicenceForm(
         id: uuID,
-        cost: cost!.cost,
+        cost: costList.where((e) => e.id == costID).first.cost,
         userId: _homeController.currentUser.value?.id ?? "",
         name: inputMap["name"]?.text ?? "", 
         fatherName: inputMap["father-name"]?.text ?? "",

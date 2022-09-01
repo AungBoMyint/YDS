@@ -1052,6 +1052,6 @@ class HomeController extends GetxController {
     });
     hideLoading();
     currentUser.value = null;
-    Get.offNamed(introScreen);
+    Get.offAllNamed(introScreen);
   }
 }

@@ -91,6 +91,24 @@ class _LoginUser extends StatelessWidget {
               ),
             ),
           ),
+          //Delete
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.red,
+                  ),
+                  onPressed: () {
+                    _controller.deleteAccount();
+                  },
+                  child: Text("Delete Account",
+                      style: TextStyle(
+                        fontSize: 16,
+                        letterSpacing: 2,
+                        wordSpacing: 2,
+                        color: Colors.white,
+                      ))),
+            ),
         ],
       ),
     );

@@ -91,7 +91,24 @@ class _ServiceFormState extends State<ServiceForm> {
                       value: e,
                       ),).toList(),
                   ),
-                  const SizedBox(height: 5,),
+                   const SizedBox(height: 5,),
+                  Obx((){
+                    return RadioTypeWidget<String>(
+                      highSpace: 10,
+                      nameWidth: 200,
+                    eachCountHeight: 150,
+                    titleWidth: 250,
+                  title: "ယာဉ်မောင်းလိုင်ကြေး အမျိုးအစား",
+                  groupValue: _controller.costID.value,
+                  onChanged: (result)=> _controller.setCostId(result),
+                  count: _controller.costList.length, 
+                  labelList: _controller.costList.map((e) => RadioModel(
+                      name: "${e.desc}\n${e.cost}ks", 
+                      value: e.id,
+                      ),).toList(),
+                  );
+                  }),
+
               ],
               
           ),

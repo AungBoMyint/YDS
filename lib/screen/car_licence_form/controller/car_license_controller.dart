@@ -23,7 +23,9 @@ class CarLicenseController extends GetxController {
     final FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
 
   var isFirstTimePress = false.obs;
+  RxList<Cost> costList = <Cost>[].obs;
   Cost? cost;
+  var costID = "".obs;
  /*  var classType = ClassType.home.obs;
   var carType = CarType.auto.obs;
   var dayType = DayType.normalDays.obs;
@@ -34,9 +36,14 @@ class CarLicenseController extends GetxController {
   void onInit() async{
     super.onInit();
     final result = await _database.readCollection(carLicenceCostCollection);
-    cost = Cost.fromJson(result.docs.first.data());
+    if(result.docs.isNotEmpty){
+      costList.value = result.docs.map((e) => Cost.fromJson(e.data())).toList();
+    costID.value = costList.first.id;
+    }
   }
+  
 
+  void setCostId(String id) => costID.value = id;
   void setSelectedDateTime(DateTime dateTime) => selectedDateTime.value = dateTime;
   
   /* void changeTimeType(TimeType value) => timeType.value = value;
@@ -72,7 +79,7 @@ class CarLicenseController extends GetxController {
       final uuID = Uuid().v1();
       final carModel = CarLicenceForm(
         id: uuID,
-        cost: cost!.cost,
+        cost: costList.where((e) => e.id == costID).first.cost,
         userId: _homeController.currentUser.value?.id ?? "",
         name: inputMap["name"]?.text ?? "", 
         address: inputMap["adress"]?.text ?? "", 

@@ -11,7 +11,7 @@ class CLPController extends GetxController{
   TextEditingController priceController = TextEditingController();
   TextEditingController descController = TextEditingController();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  Rxn<Cost> cost = Rxn<Cost>();
+  RxList<Cost> cost = <Cost>[].obs;
   final _database = Database();
   var isLoading = true.obs;
 
@@ -34,7 +34,7 @@ class CLPController extends GetxController{
     path: costData.id,
     data: costData.toJson(),
     );
-    cost.value = costData; 
+    cost.add(costData); 
     hideLoading();
     priceController.clear();
     descController.clear();
@@ -46,7 +46,7 @@ class CLPController extends GetxController{
     await _database.delete(carLicenceCostCollection, 
     path: id,
     );
-    cost.value = null;
+    cost.removeWhere((element) => element.id == id);
     hideLoading();
   }
   
@@ -57,7 +57,7 @@ class CLPController extends GetxController{
     _database.readCollection(carLicenceCostCollection)
     .then((value){
       if(value.docs.isNotEmpty){
-        cost.value = Cost.fromJson(value.docs.first.data());
+        cost.value = value.docs.map((e) => Cost.fromJson(e.data())).toList();
         isLoading.value = false;
       }else{
         isLoading.value = false;

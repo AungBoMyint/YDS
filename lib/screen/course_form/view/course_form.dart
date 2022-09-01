@@ -176,12 +176,6 @@ class _CourseFormState extends State<CourseForm> {
                   barrierColor: Colors.white.withOpacity(0),
                   elevation: 2,
                 );
-                /* _controller.submitForm(
-                  carType: carGroupValue, 
-                  courseType: classGroupValue, 
-                  dayType: dayTypeGroupValue,
-                  timeType: timeGroupValue,
-                  ); */
                 debugPrint("***********Validating is Validate*****");
               }else{
                 debugPrint("*********Invalid*****");

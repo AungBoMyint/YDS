@@ -78,7 +78,25 @@ class _CarLicenceFormState extends State<CarLicenceForm> {
                 ChildTextFieldWidget(
                   fieldKey: "toDoFromOffice",
                   fieldName: "လုပ်ငန်းဆောင်ရွက်ရန်ရုံး",
-                ),    
+                ),
+                const SizedBox(height: 5,),
+                  Obx((){
+                    return RadioTypeWidget<String>(
+                      highSpace: 10,
+                      nameWidth: 200,
+                    eachCountHeight: 150,
+                    titleWidth: 250,
+                  title: "လိုင်စင်ကြေး အမျိုးအစား",
+                  groupValue: _controller.costID.value,
+                  onChanged: (result)=> _controller.setCostId(result),
+                  count: _controller.costList.length, 
+                  labelList: _controller.costList.map((e) => RadioModel(
+                      name: "${e.desc}\n${e.cost}ks", 
+                      value: e.id,
+                      ),).toList(),
+                  );
+                  }),
+
               ],
               
           ),

@@ -77,9 +77,9 @@ class CLPManagement extends StatelessWidget {
                           ),     
                         
                 ),
-            
-              const SizedBox(height: 10),
-              Obx(
+                const SizedBox(height: 10),
+              Expanded(
+                child: Obx(
                   () {
                     if(_controller.isLoading.value){
                       return const Center(
@@ -90,47 +90,55 @@ class CLPManagement extends StatelessWidget {
                         ),
                       );
                     }
-                    if (_controller.cost.value == null) {
+                    if (_controller.cost.isEmpty) {
                       return const Center(
                           child: Text(
                         "No price yet....",
                       ));
                     }
 
-                    return  InkWell(
-                            child: Card(
-                              color: Colors.white,
-                              child: Container(
-                                padding: EdgeInsets.all(12.0),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        "${_controller.cost.value?.desc}\n"
-                                        "${_controller.cost.value?.cost}ks",
+                    return ListView.builder(
+                      itemCount: _controller.cost.length,
+                      itemBuilder: (context, index) {
+                        var cate = _controller.cost[index];
+
+                        return InkWell(
+                          child: Card(
+                            color: Colors.white,
+                            child: Container(
+                              padding: EdgeInsets.all(12.0),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      "${cate.desc}\n"
+                                      "${cate.cost.toString()}ks",
+                                    ),
+                                  ),
+                                  Spacer(),
+                                  InkWell(
+                                    onTap: () {
+                                       _controller.deletePrice(cate.id);
+                                    },
+                                    child: const Text(
+                                      "Delete",
+                                      style: TextStyle(
+                                        color: Colors.red,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 11.0,
                                       ),
                                     ),
-                                    Spacer(),
-                                    InkWell(
-                                      onTap: () {
-                                         _controller.deletePrice(_controller.cost.value?.id ?? "");
-                                      },
-                                      child: const Text(
-                                        "Delete",
-                                        style: TextStyle(
-                                          color: Colors.red,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 11.0,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
                             ),
-                          );
+                          ),
+                        );
+                      },
+                    );
                   },
                 ),
+              ),
               
             ],
           ),
