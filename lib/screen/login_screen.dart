@@ -50,7 +50,7 @@ class LoginScreen extends StatelessWidget {
                   Container(
                     width: Get.width - 100,
                     child: InkWell(
-                      onTap: () => homeController.signInWithGoogle(homeScreen),
+                      onTap: () => homeController.signInWithGoogle(),
                       child: Card(
                         color: homeIndicatorColor,
                         child: Padding(

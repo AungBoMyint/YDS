@@ -6,13 +6,8 @@ import 'package:hammies_user/widgets/home_reward.dart';
 import '../../controller/home_controller.dart';
 import '../../data/constant.dart';
 import '../../routes/routes.dart';
-import '../../ui/driving_courses/booking.dart';
-import '../question5/view/tab_bar.dart';
 import '../../utils/widget/widget.dart';
-import '../../widgets/home_category.dart';
-import '../../widgets/home_items.dart';
 import '../../widgets/home_pickup.dart';
-import 'hot.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({Key? key}) : super(key: key);
@@ -27,7 +22,6 @@ class HomeView extends StatelessWidget {
           children: [
             Column(
               children: [
-
                 Container(
                   color: Colors.grey,
                   child: Padding(
@@ -90,15 +84,9 @@ class HomeView extends StatelessWidget {
                         Expanded(
                           child: Column(
                             children: [
-                        
-                        
                               InkWell(
                                 onTap: () {
-                                  if (controller.currentUser.value == null) {
-                                    controller.signInWithGoogle(userProfileUrl);
-                                  } else {
                                     Get.toNamed(userProfileUrl);
-                                  }
                                 },
                                 child: Obx(() {
                                   return circularNetworkImage(
@@ -172,7 +160,7 @@ class ClassTypeWidgets extends StatelessWidget {
                   Column(
                     children: [
                       ElevatedButton(
-                        onPressed: ()=> Get.toNamed(courseFormScreen),
+                        onPressed: ()=> Get.toNamed(drivingCoursesScreen),
                         child: Image.asset(
                           'assets/dc.png',
                           width: 55.0,

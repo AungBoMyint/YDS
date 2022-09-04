@@ -9,6 +9,10 @@ import 'package:hammies_user/screen/admin/guideline_item/bin/gci_binding.dart';
 import 'package:hammies_user/screen/admin/guideline_item/view/gci_view.dart';
 import 'package:hammies_user/screen/admin/question_form/bin/question_form_binding.dart';
 import 'package:hammies_user/screen/admin/question_form/view/question_form_view.dart';
+import 'package:hammies_user/screen/admin/reward/bin/manage_reward_binding.dart';
+import 'package:hammies_user/screen/admin/reward/bin/upload_reward_binding.dart';
+import 'package:hammies_user/screen/admin/reward/view/manage_reward_view.dart';
+import 'package:hammies_user/screen/admin/reward/view/upload_reward_view.dart';
 import 'package:hammies_user/screen/admin/sub_question_management/bin/sub_question_management_binding.dart';
 import 'package:hammies_user/screen/admin/sub_question_management/view/sub_question_management_view.dart';
 import 'package:hammies_user/screen/course_form/bin/course_form_binding.dart';
@@ -21,8 +25,11 @@ import 'package:hammies_user/screen/service_form/view/service_form_view.dart';
 import 'package:hammies_user/screen/question5/view/tab_bar.dart';
 import 'package:hammies_user/screen/user_history/bin/user_history_binding.dart';
 import 'package:hammies_user/screen/user_history/view/user_history_view.dart';
+import 'package:hammies_user/widgets/home_items.dart';
 
 import '../controller/home_controller.dart';
+import '../controller/manage_binding.dart';
+import '../controller/upload_binding.dart';
 import '../intro_screen.dart';
 import '../screen/admin/course_price/bin/course_price_binding.dart';
 import '../screen/admin/course_price/view/course_price.dart';
@@ -37,6 +44,8 @@ import '../screen/guideline/view/guideline_view.dart';
 import '../screen/guideline_detail.dart/bin/guideline_detail_binding.dart';
 import '../screen/guideline_detail.dart/view/guideline_detail_view.dart';
 import '../screen/home_screen.dart';
+import '../screen/item_upload_screen.dart';
+import '../screen/manage_item.dart';
 import '../screen/purchase_screen.dart';
 import '../screen/search_screen.dart';
 import '../screen/user_profile_screen.dart';
@@ -68,6 +77,10 @@ const String guideLineItemManagementScreen = "/guide_line_item_management_screen
 const String guideLineScreen = "/guide_line_screen";
 const String guideLineDetailScreen = "/guide_line_detail_screen";
 const String userHistoryScreen = "/user_history_screen";
+const String manageCourseScreen = "/manage_courses_screen";
+const String uploadRewardScreen = "/upload_reward_screen";
+const String manageRewardScreen = "/manage_reward_screen";
+const String drivingCoursesScreen = "/driving_courses_screen";
 
 HomeController controller = Get.find();
 String redirectRoute() {
@@ -178,16 +191,16 @@ List<GetPage> routes = [
      page: () => UserHistoryView(),
      binding: UserHistoryBinding(),
    ),
-  /* GetPage(
+  GetPage(
     name: uploadItemScreen,
     page: () => UploadItem(),
     binding: UploadBinding(),
-  ),*/
-  /*GetPage(
+  ),
+  GetPage(
     name: mangeItemScreen,
     page: () => ManageItem(),
     binding: ManageBinding(),
-  ),*/
+  ),
   GetPage(
     name: purchaseScreen,
     page: () => PurchaseScreen(),
@@ -201,7 +214,21 @@ List<GetPage> routes = [
     page: () => SearchScreen(),
   ),
   GetPage(
+    name: drivingCoursesScreen,
+    page: () => HomeItems(),
+  ),
+  GetPage(
     name: userProfileUrl,
     page: () => UserProfileScreen(),
+  ),
+  GetPage(
+    name: uploadRewardScreen,
+    binding: UploadRewardBinding(),
+    page: () => UploadReward(),
+  ),
+  GetPage(
+    name: manageRewardScreen,
+    binding: ManageRewardBinding(),
+    page: () => ManageReward(),
   ),
 ];

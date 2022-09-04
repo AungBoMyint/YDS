@@ -25,7 +25,6 @@ Future<void> main() async {
   await Hive.initFlutter();
   Hive.registerAdapter<HiveItem>(HiveItemAdapter());
   Hive.registerAdapter<HivePurchase>(HivePurchaseAdapter());
-  
   Hive.registerAdapter<HivePurchaseItem>(HivePurchaseItemAdapter());
   Hive.registerAdapter<HiveRewardProduct>(HiveRewardProductAdapter());
   await Hive.openBox<HiveItem>(boxName);

@@ -131,7 +131,7 @@ class RewardProductSeeAll extends StatelessWidget {
                                         ))),
                                 onPressed: () {
                                   if (controller.currentUser.value == null) {
-                                    controller.signInWithGoogle(homeScreen);
+                                    controller.signInWithGoogle();
                                   } else {
                                     debugPrint(
                                         "*****Add to cart reward product**");

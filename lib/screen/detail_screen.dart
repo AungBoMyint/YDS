@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:colours/colours.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:hammies_user/routes/routes.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:get/get.dart';
 import '../controller/home_controller.dart';
@@ -197,81 +198,84 @@ class DetailScreen extends StatelessWidget {
                 SizedBox(
                   height: 30,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      children: [
-                        Text(
-                          "⏰ Training Hours",
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey,
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        children: [
+                          Text(
+                            "⏰ Training Hours",
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey,
+                            ),
                           ),
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          "10 Hours",
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
+                          SizedBox(
+                            height: 5,
                           ),
-                        )
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        Text(
-                          "📞  Phone No.1",
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey,
+                          Text(
+                            "10 Hours",
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          )
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          Text(
+                            "📞  Phone No.1",
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey,
+                            ),
                           ),
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          "09 7654 909 89",
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
+                          SizedBox(
+                            height: 5,
                           ),
-                        )
-                      ],
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Text(
-                          "📞  Phone No.2",
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey,
+                          Text(
+                            "09 7654 909 89",
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          )
+                        ],
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            "📞  Phone No.2",
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey,
+                            ),
                           ),
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          "    09 765 491007",
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
+                          SizedBox(
+                            height: 5,
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
+                          Text(
+                            "    09 765 491007",
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
                 SizedBox(height: 30),
                 Row(
@@ -382,7 +386,14 @@ class DetailScreen extends StatelessWidget {
         padding: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
         child: ElevatedButton(
           style: buttonStyle,
-          onPressed: controller.selectedItem.value.count! > 0
+          onPressed: (){
+            controller.setCoursePrice(
+              controller.selectedItem.value.price,
+              controller.selectedItem.value.name,
+              );
+            Get.toNamed(courseFormScreen);
+          },
+          /* onPressed: controller.selectedItem.value.count! > 0
               ? null
               : () {
                   Get.defaultDialog(
@@ -403,8 +414,9 @@ class DetailScreen extends StatelessWidget {
                 },
           child: controller.selectedItem.value.count! > 0
               ? Text("Enrolled")
-              : Text("Enroll Now"),
-        ),
+              : Text("Enroll Now"), */   
+          child: Text("Enroll Now"),     
+            ),
       ),
     );
   }

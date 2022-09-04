@@ -42,7 +42,13 @@ class CarLicenseController extends GetxController {
     }
   }
   
-
+  String? validate(String label,String fieldKey,String? value){
+    if(checkHasError(fieldKey,value)){
+      return "*$labelကို ဖြည့်ရန်လိုအပ်သည်";
+    }else{
+      return null;
+    }
+  }
   void setCostId(String id) => costID.value = id;
   void setSelectedDateTime(DateTime dateTime) => selectedDateTime.value = dateTime;
   

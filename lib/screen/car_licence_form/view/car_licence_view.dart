@@ -37,27 +37,33 @@ class _CarLicenceFormState extends State<CarLicenceForm> {
                   key: Key("name"),
                   fieldKey: "name",
                   fieldName: "အမည်",
+                  hintText: "အမည်",
                 ),
                
                 ChildTextFieldWidget(
                   fieldKey: "idNo",
                   fieldName: "မှတ်ပုံတင်အမှတ်",
+                  hintText: "မှတ်ပုံတင်အမှတ်",
                 ),
                 ChildTextFieldWidget(
                   fieldKey: "adress",
                   fieldName: "နေရပ်လိပ်စာ",
+                  hintText: "နေရပ်လိပ်စာ",
                 ),
                 ChildTextFieldWidget(
                   fieldKey: "phNo",
                   fieldName: "ဖုန်းနံပါတ်",
+                  hintText: "ဖုန်းနံပါတ်",
                 ),
                 ChildTextFieldWidget(
                   fieldKey: "carNo",
                   fieldName: "ကားအမှတ်",
+                  hintText: "ကားအမှတ်",
                 ),
                 ChildTextFieldWidget(
                   fieldKey: "expireDate",
                   fieldName: "ကားလိုင်စင်ကုန်ဆုံးရက်",
+                  hintText: "ကားလိုင်စင်ကုန်ဆုံးရက်",
                 ),
                 RadioTypeWidget<String>(
                   title: "ကား engin အမျိုးအစား",
@@ -78,6 +84,7 @@ class _CarLicenceFormState extends State<CarLicenceForm> {
                 ChildTextFieldWidget(
                   fieldKey: "toDoFromOffice",
                   fieldName: "လုပ်ငန်းဆောင်ရွက်ရန်ရုံး",
+                  hintText: "လုပ်ငန်းဆောင်ရွက်ရန်ရုံး",
                 ),
                 const SizedBox(height: 5,),
                   Obx((){
@@ -141,8 +148,12 @@ class _CarLicenceFormState extends State<CarLicenceForm> {
 class ChildTextFieldWidget extends StatefulWidget {
   final String fieldName;
   final String fieldKey;
+  final TextInputType? textInputType;
+  final String hintText;
   const ChildTextFieldWidget({Key? key,required this.fieldKey,
   required this.fieldName,
+  this.textInputType,
+  required this.hintText,
   }) : super(key: key);
 
   @override
@@ -159,68 +170,73 @@ class _ChildTextFieldWidgetState extends State<ChildTextFieldWidget> {
      //_controller.inputMap[widget.fieldKey] = TextEditingController();
     }
 
+  
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 50,
-      padding: const EdgeInsets.only(left: 20,right: 20,bottom: 5),
-      child: Row(
-        children: [
-          //Label
-          Text(
-            widget.fieldName,
-            style: TextStyle(
-              color: Colors.black,
-              fontSize:16,
-            ),
-          ),
-          const SizedBox(width: 10,),
-          //TextField
-          Expanded(
-              child:  TextFormField(
-                style: TextStyle(
-                  decoration: TextDecoration.none,
-                ),
-                scrollPadding: const EdgeInsets.all(5.0),
-                onChanged: (value){
-                  _controller.checkHasError(widget.fieldKey, value);
-                  setState(() {
-                    
-                  });
-                },
-                controller: _controller.inputMap[widget.fieldKey],
-                decoration: InputDecoration(
-                  contentPadding: EdgeInsets.all(0),
-                  
-                  isDense: true,
-                   disabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(
-                        width: 2,
-                        color: _controller.checkHasError(widget.fieldKey, _controller.inputMap[widget.fieldKey]?.text) ?
-                       Colors.red : Colors.grey,
-                      )
-                    ),
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(
-                        width: 2,
-                        color:_controller.checkHasError(widget.fieldKey, _controller.inputMap[widget.fieldKey]?.text) ?
-                       Colors.red : Colors.grey,
-                      )
+    final error = _controller.validate(
+                          widget.hintText, 
+                          widget.fieldKey,
+                          _controller.inputMap[widget.fieldKey]?.text
+                          );
+    return Padding(
+       padding: const EdgeInsets.only(left: 20,right: 10,top: 10),
+       child: SizedBox(
+        height:  80,
+         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+           children: [
+             Expanded(
+               child: TextFormField(
+                      keyboardType: widget.textInputType,
+                      style: TextStyle(
+                        decoration: TextDecoration.none,
+                      ),
+                      scrollPadding: const EdgeInsets.all(5.0),
+                      onChanged: (value){
+                        _controller.checkHasError(widget.fieldKey, value);
+                        setState(() {
+                        });
+                      },
+                      controller: _controller.inputMap[widget.fieldKey],
+                      decoration: InputDecoration(
+                        contentPadding: EdgeInsets.all(20),
+                        labelText: widget.hintText,
+                        labelStyle: TextStyle(
+                          color: error == null ? Colors.black
+                          : Colors.red,
+                          ),
+                        isDense: true,
+                         disabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              width: 2,
+                              color: _controller.checkHasError(widget.fieldKey, _controller.inputMap[widget.fieldKey]?.text) ?
+                             Colors.red : Colors.black,
+                            )
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              width: 2,
+                              color:_controller.checkHasError(widget.fieldKey, _controller.inputMap[widget.fieldKey]?.text) ?
+                             Colors.red : Colors.black,
+                            )
+                         ),
+                         focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                             width: 2,
+                              color:_controller.checkHasError(widget.fieldKey, _controller.inputMap[widget.fieldKey]?.text) ?
+                             Colors.red : Colors.black,
+                            )
+                         ),
+                      ),
                    ),
-                   focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(
-                       width: 2,
-                        color:_controller.checkHasError(widget.fieldKey, _controller.inputMap[widget.fieldKey]?.text) ?
-                       Colors.red : Colors.grey,
-                      )
-                   ),
-                ),
-                        ),
-             
-              ),
-        ]
-      ),
-    );
+             ),
+             Text(
+              error ?? "",
+              style: TextStyle(color: Colors.red),
+             )
+           ],
+         ),
+    ));
   }
 }
 

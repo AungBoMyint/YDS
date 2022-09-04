@@ -3,24 +3,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_swipe_action_cell/flutter_swipe_action_cell.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:hammies_user/model/reward_product.dart';
+import 'package:hammies_user/screen/admin/reward/controller/manage_reward_controller.dart';
 
-import '../controller/home_controller.dart';
-import '../controller/manage_controller.dart';
-import '../data/constant.dart';
-import '../model/item.dart';
-import '../routes/routes.dart';
+import '../../../../controller/home_controller.dart';
+import '../../../../data/constant.dart';
+import '../../../../routes/routes.dart';
 
-class ManageItem extends StatefulWidget {
-  const ManageItem({Key? key}) : super(key: key);
+class ManageReward extends StatefulWidget {
+  const ManageReward({Key? key}) : super(key: key);
 
   @override
-  State<ManageItem> createState() => _ManageItemState();
+  State<ManageReward> createState() => _ManageRewardState();
 }
 
-class _ManageItemState extends State<ManageItem> {
+class _ManageRewardState extends State<ManageReward> {
   final TextEditingController editingController = TextEditingController();
   final HomeController homeController = Get.find();
-  final ManageController mangeController = Get.find();
   @override
   void dispose() {
     homeController.clear();
@@ -34,12 +33,12 @@ class _ManageItemState extends State<ManageItem> {
       backgroundColor: scaffoldBackground,
        floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.grey,
-        onPressed: () => Get.toNamed(uploadItemScreen),
+        onPressed: () => Get.toNamed(uploadRewardScreen),
         child: Icon(FontAwesomeIcons.plus,color: Colors.white),
         ),
       appBar: AppBar(
         title: Text(
-          "Manage Courses",
+          "Manage Reward Items",
           style: TextStyle(color: Colors.black, fontSize: 14),
         ),
         elevation: 5,
@@ -58,63 +57,22 @@ class _ManageItemState extends State<ManageItem> {
           width: size.width,
           child: Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.all(20),
-                child: TextField(
-                  controller: editingController,
-                  onChanged: homeController.onSearch,
-                  // onSubmitted: homeController.searchItem,
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: "Search",
-                      suffixIcon: IconButton(
-                        onPressed: () {
-                          editingController.clear();
-                          homeController.clear();
-                        },
-                        icon: Icon(Icons.clear),
-                      )),
-                ),
-              ),
               Expanded(child: Obx(() {
-                if (homeController.isSearch.value) {
-                  //If currently searching
-                  return ListView.builder(
-                    itemCount: homeController.searchitems.length,
-                    itemBuilder: (context, index) {
-                      return itemWidget(homeController.searchitems[index]);
-                    },
-                  );
-                } else {
                   return SizedBox(
                     height: size.height,
                     width: size.width,
                     child: ListView(children: [
-                      //Export Brand
                       SizedBox(
-                          height: homeController.items.length * 140,
+                          height: homeController.rewardProductList.length * 140,
                           child: ListView.builder(
                             primary: false,
-                            itemCount: homeController.items.length,
+                            itemCount: homeController.rewardProductList.length,
                             itemBuilder: (context, index) {
-                              return itemWidget(homeController.items[index]);
-                            },
-                          )),
-                      //Own Brand
-                      SizedBox(
-                          height: homeController.brandItems.length * 140,
-                          child: ListView.builder(
-                            primary: false,
-                            itemCount: homeController.brandItems.length,
-                            itemBuilder: (context, index) {
-                              return itemWidget(
-                                  homeController.brandItems[index]);
-                            },
-                          ))
+                              return itemWidget(homeController.rewardProductList[index]);
+                            },))
                     ]),
                   );
-                }
-              })),
+                })),
             ],
           ),
         ),
@@ -123,16 +81,16 @@ class _ManageItemState extends State<ManageItem> {
   }
 }
 
-Widget itemWidget(ItemModel item) {
+Widget itemWidget(RewardProduct item) {
   final HomeController homeController = Get.find();
-  final ManageController mangeController = Get.find();
+  final ManageRewardController manageRewardController = Get.find();
   return SwipeActionCell(
     key: ValueKey(item.id),
     trailingActions: [
       SwipeAction(
         onTap: (CompletionHandler _) async {
           await _(true);
-          await mangeController.delete(item.id);
+          await manageRewardController.delete(item.id);
           //setState(() {});
         },
         title: 'Delete',
@@ -141,8 +99,8 @@ Widget itemWidget(ItemModel item) {
         color: Colors.grey,
         onTap: (CompletionHandler _) async {
           await _(false);
-          homeController.setEditItem(item);
-          Get.toNamed(uploadItemScreen);
+          homeController.setEditRewardItem(item);
+          Get.toNamed(uploadRewardScreen);
         },
         title: 'Edit',
       ),
@@ -155,7 +113,7 @@ Widget itemWidget(ItemModel item) {
         child: Row(
           children: [
             CachedNetworkImage(
-              imageUrl: item.photo,
+              imageUrl: item.image,
               width: 100,
               height: 125,
               fit: BoxFit.cover,
@@ -179,7 +137,7 @@ Widget itemWidget(ItemModel item) {
                     height: 5,
                   ),
                   Text(
-                    item.color.replaceAll(',', ', '),
+                    item.requirePoint.toString(),
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w400,
@@ -188,27 +146,6 @@ Widget itemWidget(ItemModel item) {
                   ),
                   SizedBox(
                     height: 5,
-                  ),
-                  Text(
-                    item.size.replaceAll(',', ', '),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
-                      wordSpacing: 1,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Text(
-                    "${item.price}Ks",
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
-                      letterSpacing: 1,
-                    ),
                   ),
                 ],
               ),

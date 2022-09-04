@@ -1,9 +1,14 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:colours/colours.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:hammies_user/routes/routes.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../../controller/home_controller.dart';
 import '../../data/constant.dart';
+import '../../utils/theme/theme.dart';
 
 class ProfileView extends StatelessWidget {
   const ProfileView({Key? key}) : super(key: key);
@@ -27,87 +32,186 @@ class _LoginUser extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: double.infinity,
-            height: 200,
-            padding: EdgeInsets.only(left: 20, right: 20),
-            margin: EdgeInsets.only(top: 20),
-            child: Card(
-              child: Column(
+          Center(
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+            const SizedBox(
+              height: 40,
+            ),
+            //User Profile Image
+            Obx(() {
+              return CachedNetworkImage(
+                imageBuilder: (context, imageProvider) {
+                  return CircleAvatar(
+                    radius: 40,
+                    backgroundImage: imageProvider,
+                  );
+                },
+                progressIndicatorBuilder: (context, url, status) {
+                  return Shimmer.fromColors(
+                    child: Container(
+                      color: Colors.white,
+                    ),
+                    baseColor: Colors.grey.shade300,
+                    highlightColor: Colors.grey.shade100,
+                  );
+                },
+                errorWidget: (context, url, whatever) {
+                  return const Text("Image not available");
+                },
+                imageUrl: _controller.currentUser.value?.image ?? userImage,
+                //fit: BoxFit.fill,
+              );
+            }),
+
+            const SizedBox(height: 5),
+            //Point
+            Container(
+              height: 50,
+              decoration: BoxDecoration(),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      top: 20,
-                      bottom: 20,
-                    ),
-                    child: Image.network(
-                      _controller.currentUser.value!.image,
-                      width: 100,
-                      height: 100,
-                    ),
-                  ),
-                  //   ),
-                  // ),
-                  Obx(
-                    () => Text(
-                      _controller.currentUser.value?.emailAddress ?? '',//-Email Address Will be Phone Number beacause
-                      //--I didn't change it,TODO: need to change emailAddress to phone number
-                      //--instance variable of AuthUser Object
+                  //Point Text
+                  Obx(() {
+                    return Text(
+                      "${_controller.currentUser.value?.points}",
                       style: TextStyle(
-                        fontSize: 20,
                         fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  //-----Point For Admin To Test On Their Own----//
-                  Obx(
-                    () => Text(
-                      "Your points: ${_controller.currentUser.value?.points ?? 0}",
-                      style: TextStyle(
                         fontSize: 20,
-                        fontWeight: FontWeight.bold,
+                        color: homeIndicatorColor,
                       ),
-                    ),
+                    );
+                  }),
+                  const SizedBox(width: 10),
+                  //Icon
+                  Icon(
+                    FontAwesomeIcons.coins,
+                    color: Colours.goldenRod,
+                    size: 30,
                   ),
                 ],
               ),
             ),
-          ),
-          (_controller.currentUser.value!.status! > 0) ? 
-          _AdminPanel() : const SizedBox(),
-          Padding(
-            padding: const EdgeInsets.only(top: 30, bottom: 20),
-            child: Center(
-              child: GestureDetector(
-                onTap: _controller.logout,
-                child: Text(
-                  "Logout",
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: homeIndicatorColor,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          //Delete
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.red,
-                  ),
-                  onPressed: () {
-                    _controller.deleteAccount();
-                  },
-                  child: Text("Delete Account",
-                      style: TextStyle(
-                        fontSize: 16,
+            const SizedBox(height: 5),
+            //User Name
+            Obx(() {
+              return Padding(
+                padding: const EdgeInsets.only(left: 40, right: 40, bottom: 20, top: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text("Name   :",
+                      style: TextStyle(fontSize: 20,
                         letterSpacing: 2,
                         wordSpacing: 2,
-                        color: Colors.white,
-                      ))),
+                    
+                      ),),
+                    ),
+                    Expanded(
+                      child: Text(
+                        _controller.currentUser.value?.userName.toUpperCase() ?? "",
+                        style: textStyleBold.copyWith(
+                          fontSize: 18,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }),
+            const SizedBox(height: 5),
+            //User Email
+            Obx(() {
+              return Padding(
+                padding: const EdgeInsets.only(left: 40, right: 40,),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text("Email   :",
+                                      style: TextStyle(fontSize: 20,
+                      letterSpacing: 2,
+                      wordSpacing: 2,
+                      ),),
+                    ),
+                    Expanded(
+                      child: Text(
+                        _controller.currentUser.value?.emailAddress ?? "",
+                        style: textStyleBold.copyWith(
+                          fontSize: 18,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }),
+            const SizedBox(height: 20),
+          ]),
+        ),
+          (_controller.currentUser.value!.status! > 0) ? 
+          _AdminPanel() : const SizedBox(),
+           Align(
+              alignment: Alignment.bottomCenter,
+              child: Obx(
+                 () {
+                  return _controller.currentUser.value?.status == -1 ?
+                   ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.red,
+                      ),
+                      onPressed: () {
+                        _controller.signInWithGoogle();
+                      },
+                      child: Text("Log In",
+                          style: TextStyle(
+                            fontSize: 16,
+                            letterSpacing: 2,
+                            wordSpacing: 2,
+                            color: Colors.white,
+                          )))
+                   : ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.red,
+                      ),
+                      onPressed: () {
+                        _controller.logOut();
+                      },
+                      child: Text("Log Out",
+                          style: TextStyle(
+                            fontSize: 16,
+                            letterSpacing: 2,
+                            wordSpacing: 2,
+                            color: Colors.white,
+                          )));
+                }
+              ),
+            ),
+          //Delete
+            Obx(
+               () {
+                return _controller.currentUser.value?.status != -1 ? Align(
+                  alignment: Alignment.bottomCenter,
+                  child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.red,
+                      ),
+                      onPressed: () {
+                        _controller.deleteAccount();
+                      },
+                      child: Text("Delete Account",
+                          style: TextStyle(
+                            fontSize: 16,
+                            letterSpacing: 2,
+                            wordSpacing: 2,
+                            color: Colors.white,
+                          ))),
+                ) : const SizedBox();
+              }
             ),
         ],
       ),
@@ -136,10 +240,9 @@ class _AdminPanel extends StatelessWidget {
             ),
           ),
         ),
-        /* GestureDetector(
+        GestureDetector(
           onTap: () {
-            controller.changeCat("");
-            // Get.toNamed(uploadItemScreen);
+           Get.toNamed(mangeItemScreen);
           },
           child: Container(
             height: 60,
@@ -153,8 +256,8 @@ class _AdminPanel extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Upload Item"),
-                    Icon(Icons.upload),
+                    Text("Manage Course"),
+                    Icon(Icons.edit),
                   ],
                 ),
               ),
@@ -163,7 +266,7 @@ class _AdminPanel extends StatelessWidget {
         ),
         GestureDetector(
           onTap: () {
-            // Get.toNamed(mangeItemScreen);
+           Get.toNamed(manageRewardScreen);
           },
           child: Container(
             height: 60,
@@ -177,38 +280,14 @@ class _AdminPanel extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Manage Item"),
+                    Text("Manage Reward Product"),
                     Icon(Icons.edit),
                   ],
                 ),
               ),
             ),
           ),
-        ), */
-        /* GestureDetector(
-          onTap: () {
-            // Get.toNamed(advertisementUrl);
-          },
-          child: Container(
-            height: 60,
-            margin: EdgeInsets.only(
-              left: 20,
-              right: 20,
-            ),
-            child: Card(
-              child: Padding(
-                padding: const EdgeInsets.only(left: 20, right: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text("Manage Advertisement"),
-                    Icon(Icons.edit),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ), */
+        ),
         GestureDetector(
           onTap: () {
            Get.toNamed(questionFormScreen);
@@ -281,30 +360,6 @@ class _AdminPanel extends StatelessWidget {
             ),
           ),
         ),
-        /* GestureDetector(
-          onTap: () {
-            // Get.toNamed(categoriesUrl);
-          },
-          child: Container(
-            height: 60,
-            margin: EdgeInsets.only(
-              left: 20,
-              right: 20,
-            ),
-            child: Card(
-              child: Padding(
-                padding: const EdgeInsets.only(left: 20, right: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text("Manage Categories"),
-                    Icon(Icons.edit),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ), */
         GestureDetector(
           onTap: () {
             Get.toNamed(coursePriceScreen);

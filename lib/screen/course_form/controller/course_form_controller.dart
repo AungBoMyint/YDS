@@ -59,6 +59,14 @@ class CourseFormController extends GetxController {
     }
   }
 
+  String? validate(String label,String fieldKey,String? value){
+    if(checkHasError(fieldKey,value)){
+      return "*$labelကို ဖြည့်ရန်လိုအပ်သည်";
+    }else{
+      return null;
+    }
+  }
+
 submitForm({
     required String carType,
     required String courseType,
@@ -80,7 +88,11 @@ submitForm({
           initialDay: selectedDateTime.value ?? DateTime.now(), 
           phoneNumber: inputMap["phNo"]?.text ?? "",
            timeType: timeType,
-           price: priceList.where((e) => e.id == priceID.value).first,
+           price: Price(id: "333", 
+           price: _homeController.coursePrice, 
+           dateTime: DateTime.now(), 
+           desc: _homeController.courseName,
+           ),
            userID: _homeController.currentUser.value?.id ?? "",
            dateTime: DateTime.now(),
            );

@@ -34,35 +34,44 @@ class _ServiceFormState extends State<ServiceForm> {
                 ChildTextFieldWidget(
                   fieldKey: "name",
                   fieldName: "အမည်",
+                  hintText: "အမည်",
                 ),
                 ChildTextFieldWidget(
                   fieldKey: "father-name",
                   fieldName: "အဖအမည်",
+                  hintText: "အဖအမည်",
                 ),
                 ChildTextFieldWidget(
                   fieldKey: "dateOfBirth",
                   fieldName: "မွေးသကရာဇ်",
+                  hintText: "မွေးသကရာဇ်",
                 ),
                 ChildTextFieldWidget( 
                   fieldKey: "idNo",
                   fieldName: "မှတ်ပုံတင်အမှတ်",
+                  hintText: "မှတ်ပုံတင်အမှတ်",
                 ),
                 ChildTextFieldWidget(
                   fieldKey: "adress",
                   fieldName: "နေရပ်လိပ်စာ",
+                  hintText: "နေရပ်လိပ်စာ",
                 ),
                 ChildTextFieldWidget(
                   fieldKey: "phNo",
                   fieldName: "ဖုန်းနံပါတ်",
+                  textInputType: TextInputType.phone,
+                  hintText: "ဖုန်းနံပါတ်",
                 ),
                 ChildTextFieldWidget(
                   fieldKey: "licenseNo",
                   fieldName: "လိုင်စင်အမှတ်(သက်တမ်းတိုး)",
+                  hintText: "လိုင်စင်အမှတ်(သက်တမ်းတိုး)",
                   isOptional: true,
                 ),
                 ChildTextFieldWidget(
                   fieldKey: "licenseExpireDate",
                   fieldName: "လိုင်စင်ကုန်ဆုံးရက်(သက်တမ်းတိုး)",
+                  hintText: "လိုင်စင်ကုန်ဆုံးရက်(သက်တမ်းတိုး)",
                   isOptional: true,
                 ),
                 RadioTypeWidget<String>(
@@ -156,9 +165,13 @@ class ChildTextFieldWidget extends StatefulWidget {
   final String fieldName;
   final String fieldKey;
   final bool isOptional;
+  final TextInputType? textInputType;
+  final String hintText;
   const ChildTextFieldWidget({Key? key,required this.fieldKey,
   this.isOptional = false,
   required this.fieldName,
+  this.textInputType,
+  required this.hintText,
   }) : super(key: key);
 
   @override
@@ -177,23 +190,22 @@ class _ChildTextFieldWidgetState extends State<ChildTextFieldWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 50,
-      padding: const EdgeInsets.only(left: 20,right: 20,bottom: 5),
-      child: Row(
+    final error = _controller.validate(
+                          widget.hintText, 
+                          widget.fieldKey,
+                          _controller.inputMap[widget.fieldKey]?.text
+                          );
+    return Padding(
+       padding: const EdgeInsets.only(left: 20,right: 10,top: 10),
+       child: SizedBox(
+        height:  80,
+         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          //Label
-          Text(
-            widget.fieldName,
-            style: TextStyle(
-              color: Colors.black,
-              fontSize:16,
-            ),
-          ),
-          const SizedBox(width: 10,),
           //TextField
           Expanded(
               child:  TextFormField(
+                keyboardType: widget.textInputType,
                 style: TextStyle(
                   decoration: TextDecoration.none,
                 ),
@@ -207,36 +219,46 @@ class _ChildTextFieldWidgetState extends State<ChildTextFieldWidget> {
                 },
                 controller: _controller.inputMap[widget.fieldKey],
                 decoration: InputDecoration(
-                  contentPadding: EdgeInsets.all(0),
+                  labelText: widget.hintText,
+                        labelStyle: TextStyle(
+                          color:widget.isOptional ? Colors.black : error == null  ? Colors.black
+                          : Colors.red,
+                          ),
+                  contentPadding: EdgeInsets.all(20),
                   isDense: true,
-                   disabledBorder: UnderlineInputBorder(
+                   disabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(
                         width: 2,
-                        color:widget.isOptional ? Colors.grey : ( _controller.checkHasError(widget.fieldKey, _controller.inputMap[widget.fieldKey]?.text) ?
-                       Colors.red : Colors.grey),
+                        color:widget.isOptional ? Colors.black : ( _controller.checkHasError(widget.fieldKey, _controller.inputMap[widget.fieldKey]?.text) ?
+                       Colors.red : Colors.black),
                       )
                     ),
-                    enabledBorder: UnderlineInputBorder(
+                    enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(
                         width: 2,
-                        color: widget.isOptional ? Colors.grey : (_controller.checkHasError(widget.fieldKey, _controller.inputMap[widget.fieldKey]?.text) ?
-                       Colors.red : Colors.grey),
+                        color: widget.isOptional ? Colors.black : (_controller.checkHasError(widget.fieldKey, _controller.inputMap[widget.fieldKey]?.text) ?
+                       Colors.red : Colors.black),
                       )
                    ),
-                   focusedBorder: UnderlineInputBorder(
+                   focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(
                        width: 2,
                         color:_controller.checkHasError(widget.fieldKey, _controller.inputMap[widget.fieldKey]?.text) ?
-                       Colors.red : Colors.grey,
+                       Colors.red : Colors.black,
                       )
                    ),
                 ),
                         ),
              
               ),
+              widget.isOptional ? const SizedBox() :
+              Text(
+              error ?? "",
+              style: TextStyle(color: Colors.red),
+             ),
         ]
       ),
-    );
+    ));
   }
 }
 

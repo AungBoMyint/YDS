@@ -48,6 +48,17 @@ class HomeController extends GetxController {
   RxList<CarLicenceForm> carLicenceFormList = <CarLicenceForm>[].obs;
   var alreadyWatchIfAdmin = false.obs;
 
+  /**
+   * For Course Form Price
+   */
+  int coursePrice = 0;
+  String courseName = "";
+  void setCoursePrice(int price,String name) {
+    coursePrice = price;
+    courseName = name;
+  } 
+  /** */
+
   void setMainQuestion(Question id){
     mainQuestion.value = id;
   }
@@ -292,26 +303,14 @@ class HomeController extends GetxController {
     selectedItem.value = item;
   }
 
-  final Rx<ItemModel> editItem = ItemModel(
-    photo: '',
-    photo2: '',
-    photo3: '',
-    deliverytime: '',
-    name: '',
-    price: 0,
-    color: '',
-    desc: '',
-    size: '',
-    star: 0,
-    category: '',
-    originalPrice: 0,
-    originalQuantity: 0,
-    remainQuantity: 0,
-    id: '',
-  ).obs;
-
-  void setEditItem(ItemModel itemModel) {
+  final Rxn<ItemModel?> editItem = Rxn<ItemModel>();
+  void setEditItem(ItemModel? itemModel) {
     editItem.value = itemModel;
+  }
+
+  final Rxn<RewardProduct?> editRewardItem = Rxn<RewardProduct>();
+  void setEditRewardItem(RewardProduct? itemModel) {
+    editRewardItem.value = itemModel;
   }
 
   ItemModel getItem(String id) {
@@ -995,7 +994,7 @@ class HomeController extends GetxController {
           )
           .snapshots();
 
-  Future<void> signInWithGoogle(String redirectRouteUrl) async {
+  Future<void> signInWithGoogle() async {
     showLoading();
     try {
       // Trigger the authentication flow

@@ -27,6 +27,14 @@ class ServiceFormController extends GetxController {
  
   Rxn<DateTime?> selectedDateTime = Rxn<DateTime?>();
 
+  String? validate(String label,String fieldKey,String? value){
+    if(checkHasError(fieldKey,value)){
+      return "*$labelကို ဖြည့်ရန်လိုအပ်သည်";
+    }else{
+      return null;
+    }
+  }
+  
   @override
   void onInit() async{
     super.onInit();
